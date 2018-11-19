@@ -1,6 +1,6 @@
 var player = require('play-sound')(opts = {})
  
-// $ mplayer foo.mp3 
+// mplayer needs to be installed on your raspberry pi (sudo apt-get install mplayer) 
 player.play('audioTest.mp3', function(err){
   if (err) throw err
 })
