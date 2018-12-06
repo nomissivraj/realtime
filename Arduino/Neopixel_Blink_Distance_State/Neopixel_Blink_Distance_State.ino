@@ -28,30 +28,30 @@ int trigPin3 = 8;    // Trigger
 int echoPin3 = 9;    // Echo
 long duration3;
 
-int nextTime1 = 10; // Do this every 100 milliseconds
-int nextTime2 = 20;  // Do this every 50 milliseconds
-int nextTime3 = 30;  // Do this every 50 milliseconds
+int nextTime1 = 10;  // Do this every 10 milliseconds
+int nextTime2 = 20;  // Do this every 20 milliseconds
+int nextTime3 = 30;  // Do this every 30 milliseconds
 
 
 long int goTime1, goTime2, goTime3;
 
 void setup() {
-//  Serial.begin(9600);
   pinMode(trigPin1, OUTPUT);
   pinMode(echoPin1, INPUT);
-  // start the strip and blank it out
+  // start the strip1 and blank it out
   strip1.begin();
   strip1.show();
   pinMode(trigPin2, OUTPUT);
   pinMode(echoPin2, INPUT);
-  // start the strip and blank it out
+  // start the strip1 and blank it out
   strip2.begin();
   strip2.show();
   pinMode(trigPin3, OUTPUT);
   pinMode(echoPin3, INPUT);
-  // start the strip and blank it out
+  // start the strip1 and blank it out
   strip3.begin();
   strip3.show();
+  
   goTime1 = millis();
   goTime2 = millis();
   goTime3 = millis();
@@ -72,9 +72,10 @@ void functionGo1 () {
   digitalWrite(trigPin1, LOW);
 
   duration1 = pulseIn(echoPin1, HIGH);
+  long delay1 = map (duration1, 300, 20000, 50, 4000);
   unsigned long currentMillis1 = millis();
 
-  if (currentMillis1 - previousMillis1 >= map (duration1, 300, 20000, 50, 4000)) {
+  if (currentMillis1 - previousMillis1 >= delay1) {
     // save the last time you blinked the LED
     previousMillis1 = currentMillis1;
 
@@ -93,6 +94,11 @@ void functionGo1 () {
       strip1.show();
     }
   } goTime1 = millis() + nextTime1;
+    Serial.begin(9600);
+    Serial.print("Sensor_1: ");
+    Serial.print(delay1);
+    Serial.println();
+    Serial.end();
 }
 
 // Ring 2
@@ -106,9 +112,10 @@ void functionGo2 () {
   digitalWrite(trigPin2, LOW);
 
   duration2 = pulseIn(echoPin2, HIGH);
+  long delay2 = map (duration2, 300, 20000, 50, 4000);
   unsigned long currentMillis2 = millis();
 
-  if (currentMillis2 - previousMillis2 >= map (duration2, 300, 20000, 50, 4000)) {
+  if (currentMillis2 - previousMillis2 >= delay2) {
     // save the last time you blinked the LED
     previousMillis2 = currentMillis2;
 
@@ -127,12 +134,15 @@ void functionGo2 () {
       strip2.show();
     } 
   } goTime2 = millis() + nextTime2;
+    Serial.begin(9600);
+    Serial.print("Sensor_2: ");
+    Serial.print(duration2);
+    Serial.println();
+    Serial.end();
 }
 
 // Ring 3
 void functionGo3 () {
-//  Serial.print(duration3);
-//  Serial.println();
   digitalWrite(trigPin3, LOW);
   delayMicroseconds(5);
   digitalWrite(trigPin3, HIGH);
@@ -140,9 +150,10 @@ void functionGo3 () {
   digitalWrite(trigPin3, LOW);
 
   duration3 = pulseIn(echoPin3, HIGH);
+  long delay3 = map (duration3, 300, 20000, 50, 4000);
   unsigned long currentMillis3 = millis();
 
-  if (currentMillis3 - previousMillis3 >= map (duration3, 300, 20000, 50, 4000)) {
+  if (currentMillis3 - previousMillis3 >= delay3) {
     // save the last time you blinked the LED
     previousMillis3 = currentMillis3;
 
@@ -161,4 +172,9 @@ void functionGo3 () {
       strip3.show();
     } 
   } goTime3 = millis() + nextTime3;
+    Serial.begin(9600);
+    Serial.print("Sensor_3: ");
+    Serial.print(duration3);
+    Serial.println();
+    Serial.end();
 }
