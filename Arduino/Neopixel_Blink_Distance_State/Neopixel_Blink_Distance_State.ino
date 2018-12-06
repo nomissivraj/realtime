@@ -19,21 +19,28 @@ int ledState1, ledState2, ledState3 = 0;
 int trigPin1 = 12;    // Trigger
 int echoPin1 = 13;    // Echo
 long duration1;
+int delay1;
 
 int trigPin2 = 10;    // Trigger
 int echoPin2 = 11;    // Echo
 long duration2;
+int delay2;
 
 int trigPin3 = 8;    // Trigger
 int echoPin3 = 9;    // Echo
 long duration3;
+int delay3;
 
 int nextTime1 = 10;  // Do this every 10 milliseconds
 int nextTime2 = 20;  // Do this every 20 milliseconds
 int nextTime3 = 30;  // Do this every 30 milliseconds
 
+int nextSerialTime1 = 1000;
+int nextSerialTime2 = 1000;
+int nextSerialTime3 = 1000;
 
-long int goTime1, goTime2, goTime3;
+
+long int goTime1, goTime2, goTime3, serialTime1, serialTime2, serialTime3;
 
 void setup() {
   pinMode(trigPin1, OUTPUT);
@@ -55,12 +62,48 @@ void setup() {
   goTime1 = millis();
   goTime2 = millis();
   goTime3 = millis();
+
+  serialTime1 = millis();
+  serialTime2 = millis();
+  serialTime3 = millis();
 }
 
 void loop() {
-  if(millis() >= goTime1) functionGo1();
-  if(millis() >= goTime2) functionGo2();
-  if(millis() >= goTime3) functionGo3();
+  if(millis() >= goTime1) {
+    functionGo1();
+    if (millis() >= serialTime1) {
+      Serial.begin(9600);
+      Serial.print("Sensor_1: ");
+      Serial.print(delay1);
+      Serial.println();
+      Serial.end();
+      serialTime1 = millis() + nextSerialTime1;
+    }
+  }
+  
+  if(millis() >= goTime2) {
+    functionGo2();
+    if (millis() >= serialTime2) {
+      Serial.begin(9600);
+      Serial.print("Sensor_2: ");
+      Serial.print(delay2);
+      Serial.println();
+      Serial.end();
+      serialTime2 = millis() + nextSerialTime2;
+    }
+  }
+  
+  if(millis() >= goTime3) {
+    functionGo3();
+    if (millis() >= serialTime3) {
+      Serial.begin(9600);
+      Serial.print("Sensor_3: ");
+      Serial.print(delay3);
+      Serial.println();
+      Serial.end();
+      serialTime3 = millis() + nextSerialTime3;
+    }
+  }
 }
 
 // Ring 1
@@ -72,7 +115,7 @@ void functionGo1 () {
   digitalWrite(trigPin1, LOW);
 
   duration1 = pulseIn(echoPin1, HIGH);
-  long delay1 = map (duration1, 300, 20000, 50, 4000);
+  delay1 = map (duration1, 300, 20000, 50, 4000);
   unsigned long currentMillis1 = millis();
 
   if (currentMillis1 - previousMillis1 >= delay1) {
@@ -94,17 +137,11 @@ void functionGo1 () {
       strip1.show();
     }
   } goTime1 = millis() + nextTime1;
-    Serial.begin(9600);
-    Serial.print("Sensor_1: ");
-    Serial.print(delay1);
-    Serial.println();
-    Serial.end();
+
 }
 
 // Ring 2
 void functionGo2 () {
-//  Serial.print(duration2);
-//  Serial.println();
   digitalWrite(trigPin2, LOW);
   delayMicroseconds(5);
   digitalWrite(trigPin2, HIGH);
@@ -112,7 +149,7 @@ void functionGo2 () {
   digitalWrite(trigPin2, LOW);
 
   duration2 = pulseIn(echoPin2, HIGH);
-  long delay2 = map (duration2, 300, 20000, 50, 4000);
+  delay2 = map (duration2, 300, 20000, 50, 4000);
   unsigned long currentMillis2 = millis();
 
   if (currentMillis2 - previousMillis2 >= delay2) {
@@ -134,11 +171,6 @@ void functionGo2 () {
       strip2.show();
     } 
   } goTime2 = millis() + nextTime2;
-    Serial.begin(9600);
-    Serial.print("Sensor_2: ");
-    Serial.print(duration2);
-    Serial.println();
-    Serial.end();
 }
 
 // Ring 3
@@ -150,7 +182,7 @@ void functionGo3 () {
   digitalWrite(trigPin3, LOW);
 
   duration3 = pulseIn(echoPin3, HIGH);
-  long delay3 = map (duration3, 300, 20000, 50, 4000);
+  delay3 = map (duration3, 300, 20000, 50, 4000);
   unsigned long currentMillis3 = millis();
 
   if (currentMillis3 - previousMillis3 >= delay3) {
@@ -172,9 +204,4 @@ void functionGo3 () {
       strip3.show();
     } 
   } goTime3 = millis() + nextTime3;
-    Serial.begin(9600);
-    Serial.print("Sensor_3: ");
-    Serial.print(duration3);
-    Serial.println();
-    Serial.end();
 }
