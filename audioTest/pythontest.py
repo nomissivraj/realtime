@@ -16,26 +16,43 @@ pygame.mixer.pre_init(16000, 16, 2, 4096) #frequency, size, channels, buffersize
 pygame.init() #turn all of pygame on.
 
 """ Load Sound files """
-waves = pygame.mixer.Sound("waves.wav")
-horn = pygame.mixer.Sound("wub.wav")
-
+waves = pygame.mixer.Sound("audio/waves.wav")
+horn = pygame.mixer.Sound("audio/wub.wav")
+atmos = pygame.mixer.Sound("audio/atmosphere.wav")
+industrial= pygame.mixer.Sound("audio/industrialambience.wav")
+machines = pygame.mixer.Sound("audio/machines.wav")
+metal = pygame.mixer.Sound("audio/metal-hammers.wav")
 
 """ Play Sound Files """
-waves.play(-1).set_volume(globalVol) #-1 repeats song forevere (until program closed)
-horn.play().set_volume(hornVol)
+waves.play(-1)
+waves.set_volume(0.2)#-1 repeats song forevere (until program closed)
+#horn.play().set_volume(hornVol)
+#atmos.play().set_volume(hornVol)
+#industrial.play().set_volume(hornVol)
+#machines.play().set_volume(hornVol)
+#metal.play().set_volume(hornVol)
 
 
 """" Functions """
 def updateVol():
-    sys.stdout.write("testbegin")
+    if int(sensorVal) > 100:
+        waves.set_volume(0.9)
+    elif int(sensorVal) < 100:
+        waves.set_volume(0.2)
+    print(waves.get_volume())
+    print("updateVol")
+    #sys.stdout.write("testbegin")
     globalVol = 1
-    t = threading.Timer(5.0, updateVol)
-    t.start()
-    sys.stdout.write("testend")
+    #sys.stdout.write("testend")
+
 
 while True:
+    print(waves.get_volume())
     sensorVal = int(ser.readline())
-    print(reading)
+    print(int(sensorVal))
+    updateVol()
+    #t = threading.Timer(5.0, updateVol)
+    #t.start()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
