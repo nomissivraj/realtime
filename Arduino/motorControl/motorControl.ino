@@ -52,25 +52,27 @@ void setup() {
 
   // make the transistor's pin an output:
   pinMode(motorControl, OUTPUT);  
+  Serial.begin(9600);
 }
 
 // the loop routine runs over and over again forever:
 void loop() {
 
-  digitalWrite(trigPin1, LOW);
-  delayMicroseconds(5);
-  digitalWrite(trigPin1, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin1, LOW);
-
-  duration1 = pulseIn(echoPin1, HIGH);
-  delay1 = map (distanceSensor.measureDistanceCm(), 3, 3000, 0, 255);
-
-  Serial.begin(9600);
+  delay1 = map (distanceSensor.measureDistanceCm(), 200, 5, 100, 245);
+  
+if (distanceSensor.measureDistanceCm() == -1.00){
+  analogWrite(motorControl, 100);
+}
+else{
+  analogWrite(motorControl, delay1);
+  Serial.println(delay1);
+  }
+  
   Serial.print(distanceSensor.measureDistanceCm());
   Serial.println();
 
-  analogWrite(motorControl, delay1);
+  
 
-  delay(1000);        // delay in between reads for stability
+  delay(500);        // delay in between reads for stability
+  
 }
