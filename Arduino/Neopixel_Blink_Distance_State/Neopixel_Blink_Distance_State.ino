@@ -74,7 +74,7 @@ void loop() {
     if (millis() >= serialTime1) {
       Serial.begin(9600);
       Serial.print("Sensor_1: ");
-      Serial.print(delay1);
+      Serial.print(map (duration1, 500, 142000, 0, 100));
       Serial.println();
       Serial.end();
       serialTime1 = millis() + nextSerialTime1;
@@ -86,7 +86,7 @@ void loop() {
     if (millis() >= serialTime2) {
       Serial.begin(9600);
       Serial.print("Sensor_2: ");
-      Serial.print(delay2);
+      Serial.print(map (duration2, 450, 27000, 0, 100));
       Serial.println();
       Serial.end();
       serialTime2 = millis() + nextSerialTime2;
@@ -98,7 +98,7 @@ void loop() {
     if (millis() >= serialTime3) {
       Serial.begin(9600);
       Serial.print("Sensor_3: ");
-      Serial.print(delay3);
+      Serial.print(map (duration3, 270, 27000, 30, 3000));
       Serial.println();
       Serial.end();
       serialTime3 = millis() + nextSerialTime3;
@@ -115,7 +115,7 @@ void functionGo1 () {
   digitalWrite(trigPin1, LOW);
 
   duration1 = pulseIn(echoPin1, HIGH);
-  delay1 = map (duration1, 300, 20000, 50, 4000);
+  delay1 = map (duration1, 500, 142000, 30, 3000);
   unsigned long currentMillis1 = millis();
 
   if (currentMillis1 - previousMillis1 >= delay1) {
@@ -149,7 +149,7 @@ void functionGo2 () {
   digitalWrite(trigPin2, LOW);
 
   duration2 = pulseIn(echoPin2, HIGH);
-  delay2 = map (duration2, 300, 20000, 50, 4000);
+  delay2 = map (duration2, 450, 27000, 30, 3000);
   unsigned long currentMillis2 = millis();
 
   if (currentMillis2 - previousMillis2 >= delay2) {
@@ -182,7 +182,7 @@ void functionGo3 () {
   digitalWrite(trigPin3, LOW);
 
   duration3 = pulseIn(echoPin3, HIGH);
-  delay3 = map (duration3, 300, 20000, 50, 4000);
+  delay3 = map (duration3, 270, 27000, 30, 3000);
   unsigned long currentMillis3 = millis();
 
   if (currentMillis3 - previousMillis3 >= delay3) {
