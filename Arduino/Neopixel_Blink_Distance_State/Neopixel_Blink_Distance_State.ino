@@ -73,7 +73,7 @@ void loop() {
     functionGo1();
     if (millis() >= serialTime1) {
       Serial.begin(9600);
-      Serial.print("Sensor_1: ");
+//      Serial.print("Sensor_1: ");
       Serial.print(map (duration1, 500, 142000, 0, 100));
       Serial.println();
       Serial.end();
@@ -85,7 +85,7 @@ void loop() {
     functionGo2();
     if (millis() >= serialTime2) {
       Serial.begin(9600);
-      Serial.print("Sensor_2: ");
+//      Serial.print("Sensor_2: ");
       Serial.print(map (duration2, 450, 27000, 0, 100));
       Serial.println();
       Serial.end();
@@ -97,7 +97,7 @@ void loop() {
     functionGo3();
     if (millis() >= serialTime3) {
       Serial.begin(9600);
-      Serial.print("Sensor_3: ");
+//      Serial.print("Sensor_3: ");
       Serial.print(map (duration3, 270, 27000, 30, 3000));
       Serial.println();
       Serial.end();
