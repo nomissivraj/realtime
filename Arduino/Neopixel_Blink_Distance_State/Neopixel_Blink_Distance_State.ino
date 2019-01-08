@@ -1,13 +1,13 @@
 #include <Adafruit_NeoPixel.h>
 
 //define NeoPixel Pins and Number of LEDs
-#define PIN1 1
+#define PIN4 4
 #define PIN2 2
 #define PIN3 3
 #define NUM_LEDS 16
 
 //create NeoPixel strips
-Adafruit_NeoPixel strip1 = Adafruit_NeoPixel(NUM_LEDS, PIN1, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip1 = Adafruit_NeoPixel(NUM_LEDS, PIN4, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel strip2 = Adafruit_NeoPixel(NUM_LEDS, PIN2, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel strip3 = Adafruit_NeoPixel(NUM_LEDS, PIN3, NEO_GRB + NEO_KHZ800);
 
@@ -42,6 +42,14 @@ int nextSerialTime3 = 1000;
 
 long int goTime1, goTime2, goTime3, serialTime1, serialTime2, serialTime3;
 
+const int numReadings = 10;
+
+int readings[numReadings];      // the readings from the analog input
+int readIndex = 0;              // the index of the current reading
+int total = 0;                  // the running total
+int average = 0;                // the average
+
+
 void setup() {
   pinMode(trigPin1, OUTPUT);
   pinMode(echoPin1, INPUT);
@@ -66,43 +74,46 @@ void setup() {
   serialTime1 = millis();
   serialTime2 = millis();
   serialTime3 = millis();
+
+  Serial.begin(9600);
 }
 
 void loop() {
   if(millis() >= goTime1) {
     functionGo1();
     if (millis() >= serialTime1) {
-      Serial.begin(9600);
-//      Serial.print("Sensor_1: ");
-      Serial.print(map (duration1, 500, 142000, 0, 100));
+      Serial.print("Sensor_1: ");
+      Serial.print(duration1);
+//      Serial.print(map (duration1, 400, 13000, 0, 100));
       Serial.println();
-      Serial.end();
       serialTime1 = millis() + nextSerialTime1;
     }
   }
   
   if(millis() >= goTime2) {
     functionGo2();
-    if (millis() >= serialTime2) {
-      Serial.begin(9600);
+//    if (millis() >= serialTime2) {
+//      Serial.begin(9600);
 //      Serial.print("Sensor_2: ");
-      Serial.print(map (duration2, 450, 27000, 0, 100));
-      Serial.println();
-      Serial.end();
-      serialTime2 = millis() + nextSerialTime2;
-    }
+////      Serial.print(duration2);
+//      Serial.print(map (duration2, 450, 27000, 0, 100));
+//      Serial.println();
+//      Serial.end();
+//      serialTime2 = millis() + nextSerialTime2;
+//    }
   }
   
   if(millis() >= goTime3) {
     functionGo3();
-    if (millis() >= serialTime3) {
-      Serial.begin(9600);
+//    if (millis() >= serialTime3) {
+//      Serial.begin(9600);
 //      Serial.print("Sensor_3: ");
-      Serial.print(map (duration3, 270, 27000, 30, 3000));
-      Serial.println();
-      Serial.end();
-      serialTime3 = millis() + nextSerialTime3;
-    }
+////      Serial.print(duration3);
+//      Serial.print(map (duration3, 270, 27000, 0, 100));
+//      Serial.println();
+//      Serial.end();
+//      serialTime3 = millis() + nextSerialTime3;
+//    }
   }
 }
 
@@ -137,7 +148,6 @@ void functionGo1 () {
       strip1.show();
     }
   } goTime1 = millis() + nextTime1;
-
 }
 
 // Ring 2
