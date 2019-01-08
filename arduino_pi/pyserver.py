@@ -3,7 +3,7 @@ import sys
 import pygame
 import threading
 import serial
-ser = serial.Serial('/dev/ttyUSB0', 9600) #mcu /dev/ttyUSB0 #installation /dev/ttyACM0
+ser = serial.Serial('/dev/ttyACM1', 9600) #mcu /dev/ttyUSB0 #installation /dev/ttyACM0
 
 """ Initial Program Variables """
 sensorVal1 = 77
@@ -43,32 +43,32 @@ industrialPlayed = False
 #Volume update loop that responds to the current sensor value and sets a global volume based on this
 def updateVols():
     #Set default volume for global (waves) the sensor vals here will need to be whatever sensor is highest of the 3
-    if int(sensorVal1) < 100:
+    if int(sensorVal1) < 20:
         globalVol = 0.2
     else:#Map current sensor value to a new usable range of volume
-        globalVol = map(int(sensorVal1), 0, 800, 0, 1)
+        globalVol = map(int(sensorVal1), 0, 100, 0, 1)
     #update volume with current converted/mapped sensor value
     waves.set_volume(globalVol)
     
     #Handle volume for bottle 1
-    if int(sensorVal1) < 100:
+    if int(sensorVal1) < 20:
         output1Vol = 0.2
     else:
-        output1Vol = map(int(sensorVal1), 0, 800, 0, 1);
+        output1Vol = map(int(sensorVal1), 0, 100, 0, 1);
         print("bottle 1 " +str(output1Vol))
     
     #Handle volume for bottle 2
-    if int(sensorVal2) < 100:
+    if int(sensorVal2) < 20:
         output2Vol = 0.2
     else:
-        output2Vol = map(int(sensorVal2), 0, 800, 0, 1)
+        output2Vol = map(int(sensorVal2), 0, 100, 0, 1)
         print("bottle 2 " +str(output2Vol))
                 
     #Handle volume for bottle 3
-    if int(sensorVal3) < 100:
+    if int(sensorVal3) < 0:
         output3Vol = 0.2
     else:
-        output3Vol = map(int(sensorVal3), 0, 800, 0, 1)
+        output3Vol = map(int(sensorVal3), 0, 100, 0, 1)
         print("bottle 3 " +str(output3Vol))
         
     #print("Variable Volume: "+ str(globalVol))
@@ -81,30 +81,30 @@ def updateVols():
         atmos.play()
         t = threading.Timer(258.0, resetAtmos)
         t.start()
-    print("atmos played: " + str(atmosPlayed))
+    #print("atmos played: " + str(atmosPlayed))
     atmos.set_volume(output1Vol)
     
     #PLAY BOTTLE 2
     global hornPlayed #track if horn played
     if (output2Vol > 0.2 and hornPlayed == False) :
-        print("output2: " + str(output2Vol))
+        #print("output2: " + str(output2Vol))
         hornPlayed = True
         horn.play()
         t = threading.Timer(4.0, resetHorn)
         t.start()
-    print("horn played: " + str(hornPlayed))
+    #print("horn played: " + str(hornPlayed))
     horn.set_volume(output2Vol)
     
     #PLAY BOTTLE 3
     global industrialPlayed #track if industrial played
     if (output3Vol > 0.2 and industrialPlayed == False) :
-        print("output3: " + str(output3Vol))
+        #print("output3: " + str(output3Vol))
         industrialPlayed = True
         industrial.play()
         t = threading.Timer(91.0, resetIndustrial)
         t.start()
     industrial.set_volume(output3Vol)
-    print("Industrial played: " + str(industrialPlayed))
+    #print("Industrial played: " + str(industrialPlayed))
 
 def resetAtmos() :
     global atmosPlayed
@@ -138,25 +138,38 @@ def map(value, originMin, originMax, newMin, newMax):
 
 
 while True:
-    #print(ser.readline())
+    
+    
+    stage1 = str(ser.readline().strip())
+    stage2 = stage1[2:]
+    #print(stage2)
+    incomingString = stage2[:-1]
+    #print("string " + incomingString)
+    #incomingValue = int(stage2[:1])
+    
+    #print(ser.readline()[1:1])
     #Store current sensor value from serial (ser)
     #sensorVal1 = int(ser.readline())
     #sensorVal2 = int(ser.readline())
     #sensorVal3 = int(ser.readline())
     
-#TESTING
-    sensorString = str(ser.readline()) 
-
-    if "sensor1" in sensorString:
-        sensorVal1 = int(sensorString[7:])
-        print(int(string[7:]))
-    elif "sensor2" in sensorString:
-        sensorVal2 = int(sensorString[7:])
-    elif "sensor3" in sensorString:
-        sensorVal3 = int(sensorString[7:])
-        
-#TESTING
     
+#TESTING
+    sensorString = incomingString
+#    print("string " +sensorString)
+
+
+    if "Sensor1" in sensorString:
+#        print("val1 " + str(sensorString[7:]))
+        sensorVal1 = int(str(sensorString[7:]))
+        
+    elif "Sensor2" in sensorString:
+ #      print(str(sensorString[:7]))
+        sensorVal2 = int(str(sensorString[7:]))
+    elif "Sensor3" in sensorString:
+  #     print(str(sensorString[:7]))
+        sensorVal3 = int(str(sensorString[7:]))
+#TESTING
     
     #Run volume update loop
     updateVols()
