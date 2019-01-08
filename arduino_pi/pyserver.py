@@ -30,15 +30,12 @@ metal = pygame.mixer.Sound("audio/metal-hammers.wav")
 """ Play Sound Files """
 waves.play(-1)
 waves.set_volume(globalVol)#-1 repeats song forever (until program closed)
-#horn.play().set_volume(hornVol)
-#atmos.play().set_volume(hornVol)
-#industrial.play().set_volume(hornVol)
-#machines.play().set_volume(hornVol)
-#metal.play().set_volume(hornVol)
 
-#track if played
+
+#Keep track of whether audio elements have been played
 hornPlayed = False
 atmosPlayed = False
+industrialPlayed = False
 """" Main Loop """
 #Volume update loop that responds to the current sensor value and sets a global volume based on this
 def updateVols():
@@ -62,12 +59,14 @@ def updateVols():
         output2Vol = 0.2
     else:
         output2Vol = map(int(sensorVal2), 0, 800, 0, 1)
+        print("bottle 2 " +str(output2Vol))
                 
     #Handle volume for bottle 3
     if int(sensorVal3) < 100:
         output3Vol = 0.2
     else:
         output3Vol = map(int(sensorVal3), 0, 800, 0, 1)
+        print("bottle 3 " +str(output3Vol))
         
     #print("Variable Volume: "+ str(globalVol))
     #print("Actual Volume: "+ str(waves.get_volume()))
@@ -76,32 +75,48 @@ def updateVols():
     global atmosPlayed #track if atmos played
     if (output1Vol > 0.2 and atmosPlayed == False) :
         atmosPlayed = True
-        #atmos.play().set_volume(output1Vol)
-        #t = threading.Timer(258.0, resetAtmos)
-        #t.start()
-        #hornPlayed = False
-    #print("atmos played: " + str(atmosPlayed))
+        atmos.play()
+        t = threading.Timer(258.0, resetAtmos)
+        t.start()
+    print("atmos played: " + str(atmosPlayed))
+    atmos.set_volume(output1Vol)
     
     #PLAY BOTTLE 2
     global hornPlayed #track if horn played
     if (output2Vol > 0.2 and hornPlayed == False) :
         print("output2: " + str(output2Vol))
         hornPlayed = True
-        horn.play().set_volume(output2Vol)
-        t = threading.Timer(5.0, resetHorn)
+        horn.play()
+        t = threading.Timer(4.0, resetHorn)
         t.start()
-        hornPlayed = False
     print("horn played: " + str(hornPlayed))
+    horn.set_volume(output2Vol)
+    
+    #PLAY BOTTLE 3
+    global industrialPlayed #track if industrial played
+    if (output3Vol > 0.2 and industrialPlayed == False) :
+        print("output3: " + str(output3Vol))
+        industrialPlayed = True
+        industrial.play()
+        t = threading.Timer(91.0, resetIndustrial)
+        t.start()
+    industrial.set_volume(output3Vol)
+    print("Industrial played: " + str(industrialPlayed))
 
 def resetAtmos() :
     global atmosPlayed
-    print("func!")
+    #print("func!")
     atmosPlayed = False
     
 def resetHorn() :
     global hornPlayed
-    print("func!")
+    #print("func!")
     hornPlayed = False
+    
+def resetIndustrial() :
+    global industrialPlayed
+    #print("func!")
+    industrialPlayed = False
 
 """" Functions """
 #map function to convert orignal value and range to a 0-1 float range - usabel as volume
