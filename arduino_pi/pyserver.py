@@ -14,6 +14,9 @@ output1Vol = 0.2
 output2Vol =  0.2
 output3Vol =  0.2
 
+
+
+
 """ initialisations """
 gameDisplay = pygame.display.set_mode((100, 100))
 pygame.mixer.pre_init(16000, 16, 2, 4096) #frequency, size, channels, buffersize
@@ -137,9 +140,22 @@ def map(value, originMin, originMax, newMin, newMax):
 while True:
     #print(ser.readline())
     #Store current sensor value from serial (ser)
-    sensorVal1 = int(ser.readline())
-    sensorVal2 = int(ser.readline())
-    sensorVal3 = int(ser.readline())
+    #sensorVal1 = int(ser.readline())
+    #sensorVal2 = int(ser.readline())
+    #sensorVal3 = int(ser.readline())
+    
+#TESTING
+    sensorString = str(ser.readline()) 
+
+    if "sensor1" in sensorString:
+        sensorVal1 = int(sensorString[7:])
+        print(int(string[7:]))
+    elif "sensor2" in sensorString:
+        sensorVal2 = int(sensorString[7:])
+    elif "sensor3" in sensorString:
+        sensorVal3 = int(sensorString[7:])
+        
+#TESTING
     
     
     #Run volume update loop
