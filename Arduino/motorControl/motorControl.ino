@@ -32,12 +32,12 @@
 
 
 
-int trigPin1 = 5;    // Trigger
-int echoPin1 = 6;    // Echo
+int trigPin1 = 12;    // Trigger
+int echoPin1 = 13;    // Echo
 int delay1;
 
-int trigPin2 = 7;
-int echopin2 = 8;
+int trigPin2 = 10;
+int echoPin2 = 11;
 int delay2;
 
 int trigPin3 = 9;
@@ -52,16 +52,19 @@ NewPing sonar2(trigPin2, echoPin2, 200); // NewPing setup of pins and maximum di
 NewPing sonar3(trigPin3, echoPin3, 200); // NewPing setup of pins and maximum distance.
 
 // the transistor which controls the motor will be attached to digital pin 9
-int motorControl = 9;
+int motorControl1 = 6;
+int motorControl2 = 5;
 
 // the setup routine runs once when you press reset:
 void setup() {
+  
 Serial.begin(57600);
   delayStart = millis();   // start delay
   delayRunning = true; // not finished yet
 
   // make the transistor's pin an output:
-  pinMode(motorControl, OUTPUT);  
+   pinMode(motorControl1, OUTPUT); 
+   pinMode(motorControl2, OUTPUT);
   
 }
 
@@ -69,46 +72,46 @@ Serial.begin(57600);
 void loop() {
 
   //Motor 1
-  delay1 = map (sonar1.ping_cm(), 200, 5, 5, 252);
+  delay1 = constrain(map(sonar1.ping_cm(), 200, 50, 100, 255), 100, 255);
   if (delayRunning && ((millis() - delayStart) >= 500)) {
-    if (sonar.ping_cm() == 0){
-      analogWrite(motorControl, 100);
-      Serial.println(delay1);
+    if (sonar1.ping_cm() == 0){
+      digitalWrite(motorControl1, 100);
+      //Serial.println(delay1);
     }
     else{
-       analogWrite(motorControl, delay1);
-       Serial.println(delay1);
+       analogWrite(motorControl1, delay1);
+       //Serial.println(delay1);
     }
   }
 
   //Motor 2
-  delay2 = map (sonar2.ping_cm(), 200, 5, 5, 252);
+  delay2 = constrain(map(sonar2.ping_cm(), 200, 50, 170, 255), 170, 255);
   if (delayRunning && ((millis() - delayStart) >= 500)) {
     if (sonar2.ping_cm() == 0){
-      analogWrite(motorControl, 100);
+      analogWrite(motorControl2, 170);
       Serial.println(delay2);
     }
     else{
-       analogWrite(motorControl, delay2);
+       analogWrite(motorControl2, delay2);
        Serial.println(delay2);
     }
   }
-
+/*
   //Motor 3
   delay3 = map (sonar3.ping_cm(), 200, 5, 5, 252);
   if (delayRunning && ((millis() - delayStart) >= 500)) {
     if (sonar3.ping_cm() == 0){
       analogWrite(motorControl, 100);
-      Serial.println(delay3);
+      //Serial.println(delay3);
     }
     else{
        analogWrite(motorControl, delay3);
-       Serial.println(delay3);
+       //Serial.println(delay3);
     }
   }
   
 
-  
+  */
 
   delay(1);        // delay in between reads for stability
   

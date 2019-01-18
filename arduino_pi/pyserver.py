@@ -3,7 +3,8 @@ import sys
 import pygame
 import threading
 import serial
-ser = serial.Serial('/dev/ttyUSB0', 9600) #mcu /dev/ttyUSB0 #installation /dev/ttyACM0
+# ser = serial.Serial('/dev/ttyUSB0', 9600) #mcu /dev/ttyUSB0 #installation /dev/ttyACM0
+ser = serial.Serial('/dev/tty.usbmodem14101', 9600) #mcu /dev/ttyUSB0 #installation /dev/ttyACM0
 
 """ Initial Program Variables """
 sensorVal1 = 77

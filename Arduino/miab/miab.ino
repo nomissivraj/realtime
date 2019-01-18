@@ -1,3 +1,5 @@
+
+#include <NewPing.h>
 #include <Adafruit_NeoPixel.h>
 
 //define NeoPixel Pins and Number of LEDs
@@ -39,90 +41,102 @@ int nextSerialTime1 = 1000;
 int nextSerialTime2 = 1000;
 int nextSerialTime3 = 1000;
 
+int motorDelay1;
+int motorDelay2;
+int motorDelay3;
 
-long int goTime1, goTime2, goTime3, serialTime1, serialTime2, serialTime3;
+long int goTime1, goTime2, goTime3, serialTime1, serialTime2, serialTime3, goTimeMotor1;
+
+NewPing sonar1(trigPin1, echoPin1, 200); // NewPing setup of pins and maximum distance.
+NewPing sonar2(trigPin2, echoPin2, 200); // NewPing setup of pins and maximum distance.
+NewPing sonar3(trigPin3, echoPin3, 200); // NewPing setup of pins and maximum distance.
+
+// the transistor which controls the motor will be attached to digital pin 9
+int motorControl1 = 6;
+int motorControl2 = 5;
+int motorControl3 = 7;
 
 
 void setup() {
-  pinMode(trigPin1, OUTPUT);
-  pinMode(echoPin1, INPUT);
-  // start the strip1 and blank it out
+  // put your setup code here, to run once:
   strip1.begin();
   strip1.show();
-  pinMode(trigPin2, OUTPUT);
-  pinMode(echoPin2, INPUT);
-  // start the strip1 and blank it out
   strip2.begin();
   strip2.show();
-  pinMode(trigPin3, OUTPUT);
-  pinMode(echoPin3, INPUT);
-  // start the strip1 and blank it out
   strip3.begin();
   strip3.show();
-  
+
   goTime1 = millis();
   goTime2 = millis();
   goTime3 = millis();
+
+  goTimeMotor1 = millis();
 
   serialTime1 = millis();
   serialTime2 = millis();
   serialTime3 = millis();
 
   Serial.begin(9600);
+
+  // make the transistor's pin an output:
+  pinMode(motorControl1, OUTPUT); 
+  pinMode(motorControl2, OUTPUT); 
+  pinMode(motorControl3, OUTPUT); 
+
 }
 
 void loop() {
+  // put your main code here, to run repeatedly:
   if(millis() >= goTime1) {
     functionGo1();
     if (millis() >= serialTime1) {
-      Serial.print("Sensor_1: ");
-      Serial.print(duration1);
-//      Serial.print(map (duration1, 400, 13000, 0, 100));
-      Serial.println();
+      Serial.print("Sensor1");
+      Serial.println(constrain(map(delay1, 0, 132, 100, 0), 0, 132));
+//      Serial.println(delay1);
       serialTime1 = millis() + nextSerialTime1;
     }
   }
-  
+  delay(1);        // delay in between reads for stability
+
+
   if(millis() >= goTime2) {
     functionGo2();
-//    if (millis() >= serialTime2) {
-//      Serial.begin(9600);
-//      Serial.print("Sensor_2: ");
-////      Serial.print(duration2);
-//      Serial.print(map (duration2, 450, 27000, 0, 100));
-//      Serial.println();
-//      Serial.end();
-//      serialTime2 = millis() + nextSerialTime2;
-//    }
+    if (millis() >= serialTime2) {
+      Serial.print("Sensor2");
+      Serial.println(constrain(map(delay2, 0, 132, 100, 0), 0, 132));
+      serialTime2 = millis() + nextSerialTime2;
+    }
   }
-  
-  if(millis() >= goTime3) {
+   delay(1);        // delay in between reads for stability
+
+   if(millis() >= goTime3) {
     functionGo3();
-//    if (millis() >= serialTime3) {
-//      Serial.begin(9600);
-//      Serial.print("Sensor_3: ");
-////      Serial.print(duration3);
-//      Serial.print(map (duration3, 270, 27000, 0, 100));
-//      Serial.println();
-//      Serial.end();
-//      serialTime3 = millis() + nextSerialTime3;
-//    }
+    if (millis() >= serialTime3) {
+      Serial.print("Sensor3");
+      Serial.println(constrain(map(delay3, 0, 132, 100, 0), 0, 132));
+      serialTime3 = millis() + nextSerialTime3;
+    }
   }
+   delay(1);        // delay in between reads for stability
 }
 
 // Ring 1
 void functionGo1 () {
-  digitalWrite(trigPin1, LOW);
-  delayMicroseconds(5);
-  digitalWrite(trigPin1, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin1, LOW);
 
-  duration1 = pulseIn(echoPin1, HIGH);
-  delay1 = map (duration1, 500, 142000, 30, 3000);
+  motorDelay1 = constrain(map(sonar1.ping_cm(), 200, 30, 75, 255), 75, 255);
+  delay1 = constrain(sonar1.ping_cm(), 0, 200);
+  duration1 = map(delay1, 0, 200, 0, 400);
   unsigned long currentMillis1 = millis();
 
-  if (currentMillis1 - previousMillis1 >= delay1) {
+  if (sonar1.ping_cm() == 0){
+    analogWrite(motorControl1, 75);
+    }
+  else{
+     analogWrite(motorControl1, motorDelay1);
+  }
+
+  if (delay1 != 0) {
+  if (currentMillis1 - previousMillis1 >= (duration1)) {
     // save the last time you blinked the LED
     previousMillis1 = currentMillis1;
 
@@ -141,21 +155,26 @@ void functionGo1 () {
       strip1.show();
     }
   } goTime1 = millis() + nextTime1;
+  }
 }
 
 // Ring 2
 void functionGo2 () {
-  digitalWrite(trigPin2, LOW);
-  delayMicroseconds(5);
-  digitalWrite(trigPin2, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin2, LOW);
-
-  duration2 = pulseIn(echoPin2, HIGH);
-  delay2 = map (duration2, 450, 27000, 30, 3000);
+  motorDelay2 = constrain(map(sonar2.ping_cm(), 200, 30, 75, 255), 75, 255);
+  delay2 = constrain(sonar2.ping_cm(), 0, 200);
+  duration2 = map(delay2, 0, 200, 0, 400);
   unsigned long currentMillis2 = millis();
 
-  if (currentMillis2 - previousMillis2 >= delay2) {
+  if (sonar2.ping_cm() == 0){
+    analogWrite(motorControl2, 75);
+    }
+  else{
+     analogWrite(motorControl2, motorDelay2);
+//     Serial.println(delay2);
+  }
+
+  if (delay2 != 0) {
+  if (currentMillis2 - previousMillis2 >= (duration2)) {
     // save the last time you blinked the LED
     previousMillis2 = currentMillis2;
 
@@ -163,7 +182,7 @@ void functionGo2 () {
     if (ledState2 == 0) {
       ledState2 = 1;
       for(int i = 0; i < NUM_LEDS; i++ ) {
-        strip2.setPixelColor(i, 255, 0, 0); 
+        strip2.setPixelColor(i, 255, 255, 0); 
       }
       strip2.show();
     } else {
@@ -172,23 +191,28 @@ void functionGo2 () {
         strip2.setPixelColor(i, 0, 0, 0); 
       }
       strip2.show();
-    } 
+    }
   } goTime2 = millis() + nextTime2;
+  }
 }
 
 // Ring 3
 void functionGo3 () {
-  digitalWrite(trigPin3, LOW);
-  delayMicroseconds(5);
-  digitalWrite(trigPin3, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin3, LOW);
-
-  duration3 = pulseIn(echoPin3, HIGH);
-  delay3 = map (duration3, 270, 27000, 30, 3000);
+  motorDelay3 = constrain(map(sonar3.ping_cm(), 200, 30, 75, 255), 75, 255);
+  delay3 = constrain(sonar3.ping_cm(), 0, 200);
+  duration3 = map(delay3, 0, 200, 0, 400);
   unsigned long currentMillis3 = millis();
 
-  if (currentMillis3 - previousMillis3 >= delay3) {
+  if (sonar3.ping_cm() == 0){
+    analogWrite(motorControl3, 75);
+    }
+  else{
+     analogWrite(motorControl3, motorDelay3);
+//     Serial.println(delay3);
+  }
+
+  if (delay3 != 0) {
+  if (currentMillis3 - previousMillis3 >= (duration3)) {
     // save the last time you blinked the LED
     previousMillis3 = currentMillis3;
 
@@ -196,7 +220,7 @@ void functionGo3 () {
     if (ledState3 == 0) {
       ledState3 = 1;
       for(int i = 0; i < NUM_LEDS; i++ ) {
-        strip3.setPixelColor(i, 0, 255, 0); 
+        strip3.setPixelColor(i, 255, 0, 0); 
       }
       strip3.show();
     } else {
@@ -205,6 +229,7 @@ void functionGo3 () {
         strip3.setPixelColor(i, 0, 0, 0); 
       }
       strip3.show();
-    } 
+    }
   } goTime3 = millis() + nextTime3;
+  }
 }
